@@ -9,6 +9,7 @@
 import random
 from functools import partial
 import sys
+from collections import deque
 myPrint = partial(print, end='', sep='')
 
 
@@ -67,6 +68,31 @@ def getConnectionBetweenCells(c1, c2):
     elif c1[1] > c2[1]:
         return "N", "S"
 
+def getNeighbourFromDirection(cell, direction):
+    if direction == 'S':
+        return (cell[0], cell[1] + 1)
+    elif direction == 'N':
+        return (cell[0], cell[1] - 1)
+    elif direction == 'E':
+        return (cell[0] + 1, cell[1])
+    elif direction == 'W':
+        return (cell[0] - 1, cell[1])
+
+def find_path_bfs(graph, start, goal):
+    queue = deque([("", start)])
+    visited = set()
+    while queue:
+        path, current = queue.popleft()
+        if current == goal:
+            return path
+        if current in visited:
+            continue
+        visited.add(current)
+        for direction in graph[current]:
+            neighbour = getNeighbourFromDirection(current, direction)
+            queue.append((path + direction, neighbour))
+    return "NO WAY!"
+
 for x in range(width):
     for y in range(height):
         maze[(x,y)] = []
@@ -93,9 +119,9 @@ while len(inTheMazeCells) < width * height:
         if not neighbor in frontierCells and not neighbor in inTheMazeCells:
             frontierCells.append(neighbor)
 
-print(maze)
 
-myPrint('var thing = {')
+#myPrint('var labyrinthObject = {')
+myPrint('{')
 firstItem = True
 firstWay = True
 for item in maze:
@@ -112,4 +138,16 @@ for item in maze:
             myPrint(',')
         myPrint('"', way, '"')
     myPrint(']')
-print('};')
+print('}')
+
+solution = find_path_bfs(maze, (14,13), (1,2))
+#solution = find_path_bfs(maze, (0,0), (4,4))
+myPrint('[')
+firstDirection = True
+for direction in solution:
+    if firstDirection:
+        firstDirection = False
+    else:
+        myPrint(',')
+    myPrint('"', direction, '"')
+print(']')
