@@ -8,9 +8,15 @@
 #     v
 import random
 from functools import partial
+import sys
 myPrint = partial(print, end='', sep='')
 
-labSize = 5
+
+if len(sys.argv) > 1:
+    labSize = int(sys.argv[1])
+else:
+    labSize = 5
+
 width  = labSize
 height = labSize
 maze = {} # N : New, I : In, F : Frontier
@@ -68,25 +74,18 @@ for x in range(width):
 
 #First we had one cell to the maze and find her neighbors and mark them as frontier
 randomUnvisitedCell = (random.randint(0, width - 1), random.randint(0, height - 1))
-#unvisitedCells.remove(randomUnvisitedCell)
 inTheMazeCells.append(randomUnvisitedCell)
 frontierCells = getNeighbors(width, height, randomUnvisitedCell)
 
 while len(inTheMazeCells) < width * height:
-    # print("inTheMazeCells : ", inTheMazeCells)
-    # print("frontierCells : ", frontierCells)
     randomFrontierCell = random.choice(frontierCells)
     inTheMazeCells.append(randomFrontierCell)
     selectedCellNeighbors = getNeighbors(width, height, randomFrontierCell)
     # Select a cell that is visited and near the selected frontier currently selected
-    # print("randomFrontierCell", randomFrontierCell)
-    # print(selectedCellNeighbors)
-    # print([visitedNear for visitedNear in selectedCellNeighbors if visitedNear in inTheMazeCells])
     visitedCellNear = random.choice([visitedNear for visitedNear in selectedCellNeighbors if visitedNear in inTheMazeCells])
     frontierWay, visitedWay = getConnectionBetweenCells(randomFrontierCell, visitedCellNear)
     maze[randomFrontierCell].append(frontierWay)
     maze[visitedCellNear].append(visitedWay)
-    # print("maze", maze)
 
     frontierCells.remove(randomFrontierCell)
     selectedCellNeighbors = getNeighbors(width, height, randomFrontierCell)
