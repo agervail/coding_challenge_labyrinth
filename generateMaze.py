@@ -7,6 +7,8 @@
 #     |
 #     v
 import random
+from functools import partial
+myPrint = partial(print, end='', sep='')
 
 labSize = 5
 width  = labSize
@@ -94,10 +96,21 @@ while len(inTheMazeCells) < width * height:
 
 print(maze)
 
-print('var thing = {', end='')
+myPrint('var thing = {')
+firstItem = True
+firstWay = True
 for item in maze:
-    print('"', item[0], ',', item[1], '"', ' : [', end='', sep='')
+    if firstItem:
+        firstItem = False
+    else:
+        myPrint(',')
+    myPrint('"', item[0], ',', item[1], '"', ' : [')
+    firstWay = True
     for way in maze[item]:
-        print('"', way, '"', ',', end='', sep='')
-    print('],', end='')
+        if firstWay:
+            firstWay = False
+        else:
+            myPrint(',')
+        myPrint('"', way, '"')
+    myPrint(']')
 print('};')
